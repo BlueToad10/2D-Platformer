@@ -1,11 +1,16 @@
-import pygame
+import pygame, sys
 from pygame.locals import *
 wsize=(720, 480)
 BACKGROUNDCOLOUR = (0, 0, 0)
 Images=[]
-LoadLevel=playerPosY=jump=y3=x3=0
+LoadLevel=jump=y3=x3=0
 playerPosX=-4
+playerPosY=64
 moveLeft=moveRight=moveJump=False
+FPS = 60
+levelx=levely=0
+playerMoveX=playerMoveY=0
+
 player_list=pygame.sprite.Group()
 ground_list=pygame.sprite.Group()
 for i in range(3):
@@ -34,6 +39,19 @@ def drawBlock(group, block, size, x, y, x2, y2):
         y += size
         if y >= y2:
             break
+
+def loadLevel(fileName):
+    level = open(fileName,"r+")
+    level.read(0)
+    for line in level:
+        if line.startswith("1"):
+            numbers = [word.split(' ') for word in line.splitlines()]
+         #   print(numbers)
+            levelx = numbers[0][2]
+            levely = numbers[0][1]
+            ground_list.add(ground(int(levelx), int(levely)))
+            #print(line)
+    level.close()
 
 class player(pygame.sprite.Sprite):
     def __init__(self):
@@ -80,10 +98,10 @@ class ground(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = Images[0]
         self.rect = self.image.get_rect()
-        self.rect.x = x - playerPosX
-        self.rect.y = y - playerPosY
-        self.groundPosX = x
-        self.groundPosY = y 
+        self.rect.x = x * 32 - playerPosX
+        self.rect.y = y * 32 - playerPosY
+        self.groundPosX = x * 32
+        self.groundPosY = y * 32
     def update(self):
         global playerPosX, playerPosY
         self.rect.x = self.groundPosX - playerPosX
@@ -98,12 +116,6 @@ player_list.add(collideright())
 player_list.add(collidetop())
 player_list.add(collidebottom())
 player_list.add(player())
-drawBlock(ground_list, ground, 32, -128, -128, 800, 0)
-drawBlock(ground_list, ground, 32, 0, 384, 700, 800)
-drawBlock(ground_list, ground, 32, -128, 0, 0, 800)
-drawBlock(ground_list, ground, 32, 672, 0, 800, 800)
-
-drawBlock(ground_list, ground, 32, 0, 200, 200, 200)
 def mainLoop():
     global playerPosX, playerPosY, jump, moveLeft, moveRight, moveJump
     windowSurface.fill(BACKGROUNDCOLOUR)
@@ -111,9 +123,9 @@ def mainLoop():
     ground_list.draw(windowSurface)
     player_list.draw(windowSurface)
     pygame.display.update()
-    if moveLeft == True and not pygame.sprite.spritecollideany(collideleft(), ground_list):
+    if moveLeft == True and moveRight == False and not pygame.sprite.spritecollideany(collideleft(), ground_list):
         playerPosX -= 8
-    if moveRight == True and not pygame.sprite.spritecollideany(collideright(), ground_list):
+    if moveRight == True and moveLeft == False and not pygame.sprite.spritecollideany(collideright(), ground_list):
         playerPosX += 8
     if moveJump == True:
         playerPosY -= 8
@@ -141,11 +153,14 @@ def mainLoop():
                 moveRight = False
             if event.key == ord('x'):
                 moveJump = False
+    mainClock.tick(FPS)
    # if pygame.sprite.spritecollideany(collideleft(), ground_list) and pygame.sprite.spritecollideany(collidetop(), ground_list):
       #  playerPosX += 8
        # playerPosY += 8
   #  elif pygame.sprite.spritecollideany(collideright(), ground_list) and pygame.sprite.spritecollideany(collidetop(), ground_list):
      #   playerPosX -= 8
      #   playerPosY += 8
+     
+loadLevel("level1.lvl")
 while True:
     mainLoop()
