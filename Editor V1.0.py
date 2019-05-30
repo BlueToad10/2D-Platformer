@@ -172,7 +172,7 @@ class ground(pygame.sprite.Sprite):
             self.yloc = self.groundPosY
         if self.type > 0:
             self.type = 1
-            file1.write(str(self.type) + " " + str(self.xloc) +" " + str(self.yloc) + "\n")
+            file1.write(str(self.type) + " " + str(self.yloc) +" " + str(self.xloc) + "\n")
         
       #  if self.groundPosX > levelSizeRight or self.groundPosX < levelSizeLeft or self.groundPosY > levelSizeBottom or self.groundPosY < levelSizeTop:
           # self.remove(ground_list)
