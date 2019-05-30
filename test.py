@@ -10,10 +10,12 @@ moveLeft=moveRight=moveJump=False
 FPS = 60
 levelx=levely=0
 playerMoveX=playerMoveY=0
+ImagesNum=4
+levelBlock=0
 
 player_list=pygame.sprite.Group()
 ground_list=pygame.sprite.Group()
-for i in range(3):
+for i in range(ImagesNum + 1):
     Images.append(pygame.transform.scale(pygame.image.load('block_' + str(LoadLevel) + '.png'), (32, 32)))
     LoadLevel += 1
 
@@ -41,16 +43,16 @@ def drawBlock(group, block, size, x, y, x2, y2):
             break
 
 def loadLevel(fileName):
+    global levelBlock
     level = open(fileName,"r+")
     level.read(0)
     for line in level:
         if line.startswith("1"):
             numbers = [word.split(' ') for word in line.splitlines()]
-         #   print(numbers)
             levelx = numbers[0][2]
             levely = numbers[0][1]
-            ground_list.add(ground(int(levelx), int(levely)))
-            #print(line)
+            levelBlock = numbers[0][3]
+            ground_list.add(ground(int(levelx), int(levely), int(levelBlock)))
     level.close()
 
 class player(pygame.sprite.Sprite):
@@ -94,9 +96,9 @@ class collidebottom(pygame.sprite.Sprite):
         self.rect.y = 287
 
 class ground(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, levelBlock):
         pygame.sprite.Sprite.__init__(self)
-        self.image = Images[0]
+        self.image = Images[levelBlock]
         self.rect = self.image.get_rect()
         self.rect.x = x * 32 - playerPosX
         self.rect.y = y * 32 - playerPosY
