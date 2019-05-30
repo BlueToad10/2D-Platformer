@@ -247,6 +247,7 @@ class ground(pygame.sprite.Sprite):
         else:
             self.yloc = self.groundPosY
         if int(self.type) > 0:
+            objectType = 1
             file1.write(str(objectType) + " " + str(self.yloc) +" " + str(self.xloc) + " " + str(self.type) + "\n")        
 
 pygame.display.set_caption('Super Mario 8-Bit Odyssey Editor')
